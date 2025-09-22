@@ -10,7 +10,9 @@ import traceback
 from typing import Dict, Any, Optional
 
 # Add parent directory to path
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+current_dir = os.path.dirname(__file__)
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir)
 
 from grounded_sam2 import VideoAnalyzer
 from grounded_sam2.utils import (
