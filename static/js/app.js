@@ -276,7 +276,24 @@ class CCTVAnalysisApp {
                 return;
             }
 
-            // Proceed with download
+            // Try direct download approach first
+            try {
+                const downloadUrl = `/download/${this.currentTaskId}/${fileType}`;
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = `result_${fileType}_${this.currentTaskId}.${fileType === 'video' ? 'mp4' : 'json'}`;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                this.showSuccess(`${fileType === 'video' ? '動画' : '注釈データ'}のダウンロードを開始しました`);
+                return; // Exit if direct download works
+            } catch (directError) {
+                console.log('Direct download failed, trying fetch approach:', directError);
+            }
+            
+            // Fallback to fetch approach
             const response = await fetch(`/download/${this.currentTaskId}/${fileType}`, {
                 method: 'GET',
                 headers: {

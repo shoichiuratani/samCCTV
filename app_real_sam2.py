@@ -93,34 +93,39 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def process_video_real_sam2(task):
-    """Process video with REAL Grounded-SAM-2"""
-    if not analyzer_ready or real_analyzer is None:
-        # Fallback to enhanced mock if real analyzer not available
-        return process_video_enhanced_mock(task)
+    """Process video with REAL Grounded-SAM-2 or improved detection"""
+    video_path = task['file_path']
+    text_prompt = task['text_prompt']
+    task_id = task['id']
     
+    # Create output directory for this task
+    output_dir = os.path.join(app.config['OUTPUT_FOLDER'], task_id)
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Try real SAM2 first, then improved detection, then basic mock
+    if analyzer_ready and real_analyzer is not None:
+        try:
+            print(f"🤖 Starting REAL Grounded-SAM-2 analysis for task {task_id}")
+            result = real_analyzer.analyze_video(
+                video_path=video_path,
+                text_prompt=text_prompt,
+                output_dir=output_dir
+            )
+            print(f"✅ REAL analysis completed for task {task_id}")
+            return result
+        except Exception as e:
+            print(f"❌ Real SAM2 failed: {e}, trying improved detection")
+    
+    # Use improved OpenCV-based detection
     try:
-        video_path = task['file_path']
-        text_prompt = task['text_prompt']
-        task_id = task['id']
-        
-        print(f"Starting REAL Grounded-SAM-2 analysis for task {task_id}")
-        print(f"Video: {video_path}, Prompt: '{text_prompt}'")
-        
-        # Create output directory for this task
-        output_dir = os.path.join(app.config['OUTPUT_FOLDER'], task_id)
-        os.makedirs(output_dir, exist_ok=True)
-        
-        # Run real analysis
-        result = real_analyzer.analyze_video(
-            video_path=video_path,
-            text_prompt=text_prompt,
-            output_dir=output_dir
-        )
-        
-        print(f"REAL analysis completed for task {task_id}")
-        print(f"Found {len(result['detected_objects'])} detections")
-        
+        from improved_detection import process_video_improved_detection
+        print(f"🔍 Starting improved OpenCV detection for task {task_id}")
+        result = process_video_improved_detection(video_path, output_dir, text_prompt)
+        print(f"✅ Improved detection completed for task {task_id}")
         return result
+    except Exception as e:
+        print(f"❌ Improved detection failed: {e}, falling back to basic mock")
+        return process_video_enhanced_mock(task)
         
     except Exception as e:
         print(f"Real analysis failed, falling back to mock: {e}")

@@ -19,5 +19,214 @@
         "processing_time": "0:00:42"
       }
     }
+  },
+  "a074dbad-4421-43d3-a16c-039292ef59b4": {
+    "id": "a074dbad-4421-43d3-a16c-039292ef59b4",
+    "filename": "test.mp4",
+    "file_path": "/home/user/webapp/uploads/a074dbad-4421-43d3-a16c-039292ef59b4.mp4",
+    "status": "completed",
+    "upload_time": "2025-09-22T03:58:23.504139",
+    "file_size": 48170507,
+    "text_prompt": "person",
+    "start_time": "2025-09-22T03:58:27.636774",
+    "analyzer_type": "Real Grounded-SAM-2",
+    "end_time": "2025-09-22T03:58:34.470220",
+    "result": {
+      "detected_objects": [
+        {
+          "frame": 6,
+          "class_name": "person",
+          "bbox": [
+            288,
+            190,
+            414,
+            322
+          ],
+          "confidence": 0.7406009908064792,
+          "track_id": 1,
+          "mask_area": 11023
+        },
+        {
+          "frame": 11,
+          "class_name": "person",
+          "bbox": [
+            302,
+            180,
+            433,
+            309
+          ],
+          "confidence": 0.9393586774665631,
+          "track_id": 1,
+          "mask_area": 10553
+        },
+        {
+          "frame": 16,
+          "class_name": "person",
+          "bbox": [
+            318,
+            188,
+            453,
+            270
+          ],
+          "confidence": 0.7809208047656612,
+          "track_id": 1,
+          "mask_area": 7945
+        },
+        {
+          "frame": 21,
+          "class_name": "person",
+          "bbox": [
+            285,
+            189,
+            390,
+            336
+          ],
+          "confidence": 0.7938273232779836,
+          "track_id": 1,
+          "mask_area": 5256
+        },
+        {
+          "frame": 26,
+          "class_name": "person",
+          "bbox": [
+            295,
+            181,
+            419,
+            276
+          ],
+          "confidence": 0.8507687909674054,
+          "track_id": 1,
+          "mask_area": 10888
+        },
+        {
+          "frame": 31,
+          "class_name": "person",
+          "bbox": [
+            307,
+            176,
+            444,
+            265
+          ],
+          "confidence": 0.8789539992310881,
+          "track_id": 1,
+          "mask_area": 11702
+        },
+        {
+          "frame": 36,
+          "class_name": "person",
+          "bbox": [
+            297,
+            176,
+            405,
+            259
+          ],
+          "confidence": 0.9231862908847216,
+          "track_id": 1,
+          "mask_area": 13800
+        },
+        {
+          "frame": 46,
+          "class_name": "person",
+          "bbox": [
+            310,
+            189,
+            391,
+            310
+          ],
+          "confidence": 0.710242058159232,
+          "track_id": 1,
+          "mask_area": 7820
+        },
+        {
+          "frame": 51,
+          "class_name": "person",
+          "bbox": [
+            300,
+            183,
+            381,
+            315
+          ],
+          "confidence": 0.8641338695578912,
+          "track_id": 1,
+          "mask_area": 8581
+        },
+        {
+          "frame": 56,
+          "class_name": "person",
+          "bbox": [
+            296,
+            182,
+            382,
+            304
+          ],
+          "confidence": 0.9242468370978429,
+          "track_id": 1,
+          "mask_area": 14264
+        },
+        {
+          "frame": 76,
+          "class_name": "person",
+          "bbox": [
+            315,
+            184,
+            463,
+            310
+          ],
+          "confidence": 0.840457866177791,
+          "track_id": 1,
+          "mask_area": 8953
+        },
+        {
+          "frame": 86,
+          "class_name": "person",
+          "bbox": [
+            312,
+            189,
+            432,
+            299
+          ],
+          "confidence": 0.67984346230595,
+          "track_id": 1,
+          "mask_area": 13789
+        },
+        {
+          "frame": 91,
+          "class_name": "person",
+          "bbox": [
+            300,
+            180,
+            387,
+            260
+          ],
+          "confidence": 0.919831864706901,
+          "track_id": 1,
+          "mask_area": 7970
+        },
+        {
+          "frame": 96,
+          "class_name": "person",
+          "bbox": [
+            314,
+            191,
+            439,
+            295
+          ],
+          "confidence": 0.8997603552881659,
+          "track_id": 1,
+          "mask_area": 11350
+        }
+      ],
+      "output_video_path": "/home/user/webapp/outputs/a074dbad-4421-43d3-a16c-039292ef59b4/result_video.mp4",
+      "annotations_path": "/home/user/webapp/outputs/a074dbad-4421-43d3-a16c-039292ef59b4/annotations.json",
+      "summary": {
+        "total_frames": 100,
+        "processed_frames": 100,
+        "total_detections": 14,
+        "unique_objects": 1,
+        "tracking_duration": "5.2s",
+        "average_fps": "19.2",
+        "model_version": "Enhanced Mock (Real SAM2 Not Available)"
+      }
+    }
   }
 }
