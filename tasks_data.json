@@ -228,5 +228,28 @@
         "model_version": "Enhanced Mock (Real SAM2 Not Available)"
       }
     }
+  },
+  "3df43201-e65f-468a-97fb-5df2c2c99dc7": {
+    "id": "3df43201-e65f-468a-97fb-5df2c2c99dc7",
+    "filename": "test.mp4",
+    "file_path": "/home/user/webapp/uploads/3df43201-e65f-468a-97fb-5df2c2c99dc7.mp4",
+    "status": "completed",
+    "upload_time": "2025-09-22T04:06:15.931725",
+    "file_size": 48170507,
+    "text_prompt": "person",
+    "start_time": "2025-09-22T04:06:40.605097",
+    "analyzer_type": "Real Grounded-SAM-2",
+    "end_time": "2025-09-22T04:07:37.900283",
+    "result": {
+      "output_video_path": "/home/user/webapp/outputs/3df43201-e65f-468a-97fb-5df2c2c99dc7/result_video.mp4",
+      "annotations_path": "/home/user/webapp/outputs/3df43201-e65f-468a-97fb-5df2c2c99dc7/annotations.json",
+      "summary": {
+        "total_detections": 21,
+        "unique_objects": 1,
+        "frames_processed": 302,
+        "processing_time": "0:01:30",
+        "detection_method": "Improved OpenCV Detection"
+      }
+    }
   }
 }

@@ -1,0 +1,1 @@
+# Utils package for Grounded-SAM-2 CCTV analysis
