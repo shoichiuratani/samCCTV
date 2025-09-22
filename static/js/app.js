@@ -66,9 +66,9 @@ class CCTVAnalysisApp {
             return;
         }
 
-        // Validate file size (512MB)
-        if (file.size > 512 * 1024 * 1024) {
-            this.showError('ファイルサイズが大きすぎます。最大512MBまで対応しています。');
+        // Validate file size (1GB)
+        if (file.size > 1024 * 1024 * 1024) {
+            this.showError('ファイルサイズが大きすぎます。最大1GBまで対応しています。');
             return;
         }
 
@@ -84,7 +84,7 @@ class CCTVAnalysisApp {
         this.showProgress();
         
         const formData = new FormData();
-        formData.append('video', file);
+        formData.append('file', file);
 
         const xhr = new XMLHttpRequest();
 

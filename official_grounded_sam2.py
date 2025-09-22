@@ -4,6 +4,7 @@ Based on IDEA-Research/Grounded-SAM-2 official implementation
 """
 
 import os
+import sys
 import cv2
 import json
 import torch
@@ -78,6 +79,11 @@ class OfficialGroundedSAM2Analyzer:
     def _load_huggingface_models(self) -> bool:
         """Load models from HuggingFace (recommended approach)"""
         try:
+            # Add SAM2 to Python path
+            sam2_path = "/home/user/webapp/Grounded-SAM-2"
+            if sam2_path not in sys.path:
+                sys.path.insert(0, sam2_path)
+            
             # Import required modules
             from sam2.build_sam import build_sam2_video_predictor, build_sam2
             from sam2.sam2_image_predictor import SAM2ImagePredictor
