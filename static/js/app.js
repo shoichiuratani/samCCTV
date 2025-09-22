@@ -257,10 +257,32 @@ class CCTVAnalysisApp {
     }
 
     async downloadFile(fileType) {
-        if (!this.currentTaskId) return;
+        if (!this.currentTaskId) {
+            this.showError('タスクIDが見つかりません。再度動画をアップロードしてください。');
+            return;
+        }
 
         try {
-            const response = await fetch(`/download/${this.currentTaskId}/${fileType}`);
+            // First check if task exists and is completed
+            const statusResponse = await fetch(`/status/${this.currentTaskId}`);
+            if (!statusResponse.ok) {
+                this.showError('タスクが見つかりません。動画を再度アップロードして解析してください。');
+                return;
+            }
+
+            const taskStatus = await statusResponse.json();
+            if (taskStatus.status !== 'completed') {
+                this.showError('解析が完了していません。解析完了後に再度お試しください。');
+                return;
+            }
+
+            // Proceed with download
+            const response = await fetch(`/download/${this.currentTaskId}/${fileType}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': fileType === 'video' ? 'video/mp4' : 'application/json'
+                }
+            });
             
             if (response.ok) {
                 const blob = await response.blob();
@@ -272,11 +294,20 @@ class CCTVAnalysisApp {
                 a.click();
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
+                
+                this.showSuccess(`${fileType === 'video' ? '動画' : '注釈データ'}のダウンロードが完了しました`);
             } else {
-                const error = await response.json();
-                this.showError(error.error || 'ダウンロードに失敗しました');
+                let errorMessage;
+                try {
+                    const error = await response.json();
+                    errorMessage = error.error || 'ダウンロードに失敗しました';
+                } catch {
+                    errorMessage = `ダウンロードに失敗しました (HTTP ${response.status})`;
+                }
+                this.showError(errorMessage);
             }
         } catch (error) {
+            console.error('Download error:', error);
             this.showError(`ダウンロードエラー: ${error.message}`);
         }
     }

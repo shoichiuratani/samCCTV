@@ -234,42 +234,102 @@ def get_results(task_id):
 @app.route('/download/<task_id>/<file_type>')
 def download_result(task_id, file_type):
     """Download result files (video or annotations)"""
-    if task_id not in analysis_tasks:
-        return jsonify({'error': 'Task not found'}), 404
-    
-    task = analysis_tasks[task_id]
-    if task['status'] != 'completed':
-        return jsonify({'error': 'Analysis not completed'}), 400
-    
-    result = task.get('result', {})
-    
-    if file_type == 'video':
-        file_path = result.get('output_video_path')
-        if file_path and os.path.exists(file_path):
-            return send_file(file_path, as_attachment=True)
-    elif file_type == 'annotations':
-        file_path = result.get('annotations_path')
-        if file_path and os.path.exists(file_path):
-            return send_file(file_path, as_attachment=True)
-    
-    return jsonify({'error': 'File not found'}), 404
+    try:
+        if task_id not in analysis_tasks:
+            return jsonify({'error': 'Task not found'}), 404
+        
+        task = analysis_tasks[task_id]
+        if task['status'] != 'completed':
+            return jsonify({'error': 'Analysis not completed'}), 400
+        
+        result = task.get('result', {})
+        
+        if file_type == 'video':
+            file_path = result.get('output_video_path')
+            if file_path and os.path.exists(file_path):
+                filename = f"result_video_{task_id}.mp4"
+                return send_file(file_path, 
+                               as_attachment=True, 
+                               download_name=filename,
+                               mimetype='video/mp4')
+        elif file_type == 'annotations':
+            file_path = result.get('annotations_path')
+            if file_path and os.path.exists(file_path):
+                filename = f"annotations_{task_id}.json"
+                return send_file(file_path, 
+                               as_attachment=True, 
+                               download_name=filename,
+                               mimetype='application/json')
+        
+        return jsonify({'error': 'File not found'}), 404
+        
+    except Exception as e:
+        print(f"Download error: {e}")
+        return jsonify({'error': f'Download failed: {str(e)}'}), 500
 
 @app.route('/tasks')
 def list_tasks():
     """List all analysis tasks"""
     tasks = []
     for task_id, task in analysis_tasks.items():
-        tasks.append({
+        task_info = {
             'task_id': task_id,
             'filename': task.get('filename'),
             'status': task['status'],
             'upload_time': task.get('upload_time'),
             'text_prompt': task.get('text_prompt')
-        })
+        }
+        
+        # Add file availability info for completed tasks
+        if task['status'] == 'completed' and 'result' in task:
+            result = task['result']
+            task_info['files_available'] = {
+                'video': os.path.exists(result.get('output_video_path', '')),
+                'annotations': os.path.exists(result.get('annotations_path', ''))
+            }
+        
+        tasks.append(task_info)
     
     # Sort by upload time (newest first)
     tasks.sort(key=lambda x: x.get('upload_time', ''), reverse=True)
     return jsonify(tasks)
+
+@app.route('/debug/files/<task_id>')
+def debug_files(task_id):
+    """Debug endpoint to check file availability"""
+    if task_id not in analysis_tasks:
+        return jsonify({'error': 'Task not found'}), 404
+    
+    task = analysis_tasks[task_id]
+    result = task.get('result', {})
+    
+    debug_info = {
+        'task_id': task_id,
+        'status': task['status'],
+        'result_exists': 'result' in task,
+        'output_dir': os.path.join(app.config['OUTPUT_FOLDER'], task_id),
+        'files': {}
+    }
+    
+    if 'result' in task:
+        video_path = result.get('output_video_path')
+        annotations_path = result.get('annotations_path')
+        
+        debug_info['files'] = {
+            'video_path': video_path,
+            'video_exists': os.path.exists(video_path) if video_path else False,
+            'annotations_path': annotations_path,
+            'annotations_exists': os.path.exists(annotations_path) if annotations_path else False
+        }
+        
+        # List actual files in output directory
+        output_dir = debug_info['output_dir']
+        if os.path.exists(output_dir):
+            debug_info['actual_files'] = os.listdir(output_dir)
+        else:
+            debug_info['actual_files'] = []
+    
+    return jsonify(debug_info)
 
 @app.route('/system/status')
 def system_status():
@@ -302,4 +362,5 @@ if __name__ == '__main__':
     print(f"Output folder: {app.config['OUTPUT_FOLDER']}")
     print("Server will run on http://0.0.0.0:5000")
     
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    port = int(os.environ.get('PORT', 5001))  # Use port 5001 as fallback
+    app.run(host='0.0.0.0', port=port, debug=False)
