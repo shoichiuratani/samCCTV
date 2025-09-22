@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV映像解析アプリケーション</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-video"></i> CCTV映像解析システム</h1>
+            <p>Grounded-SAM-2を使用した高精度オブジェクト検出・追跡</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <h2><i class="fas fa-cloud-upload-alt"></i> 動画アップロード</h2>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-content">
+                        <i class="fas fa-file-video upload-icon"></i>
+                        <p>動画ファイルをドラッグ&ドロップするか、クリックして選択</p>
+                        <p class="upload-hint">対応形式: MP4, AVI, MOV, MKV (最大512MB)</p>
+                        <input type="file" id="videoFile" accept="video/*" style="display: none;">
+                        <button type="button" class="btn btn-primary" id="selectFileBtn">
+                            <i class="fas fa-folder-open"></i> ファイル選択
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Upload Progress -->
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <p id="uploadStatus">アップロード中...</p>
+                </div>
+
+                <!-- File Info -->
+                <div class="file-info" id="fileInfo" style="display: none;">
+                    <h3><i class="fas fa-info-circle"></i> ファイル情報</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">ファイル名:</span>
+                            <span id="fileName"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">ファイルサイズ:</span>
+                            <span id="fileSize"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">タスクID:</span>
+                            <span id="taskId"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analysis Section -->
+            <section class="analysis-section" id="analysisSection" style="display: none;">
+                <h2><i class="fas fa-search"></i> 解析設定</h2>
+                <div class="analysis-form">
+                    <div class="form-group">
+                        <label for="textPrompt">検出したいオブジェクト (テキストプロンプト)</label>
+                        <input type="text" id="textPrompt" placeholder="例: person, car, bag, bicycle" 
+                               class="form-control">
+                        <p class="form-hint">複数のオブジェクトはカンマで区切って入力してください</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success" id="startAnalysisBtn">
+                            <i class="fas fa-play"></i> 解析開始
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Processing Section -->
+            <section class="processing-section" id="processingSection" style="display: none;">
+                <h2><i class="fas fa-cog fa-spin"></i> 解析中</h2>
+                <div class="processing-status">
+                    <div class="spinner"></div>
+                    <p id="processingStatus">動画を解析しています...</p>
+                    <div class="processing-details">
+                        <p id="processingDetails">Grounded-SAM-2を使用してオブジェクトを検出・追跡中</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2><i class="fas fa-chart-line"></i> 解析結果</h2>
+                
+                <!-- Summary -->
+                <div class="results-summary" id="resultsSummary">
+                    <h3>解析サマリー</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">処理フレーム数:</span>
+                            <span id="processedFrames">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">検出オブジェクト数:</span>
+                            <span id="uniqueObjects">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">処理時間:</span>
+                            <span id="processingDuration">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Downloads -->
+                <div class="downloads-section">
+                    <h3>結果ダウンロード</h3>
+                    <div class="download-buttons">
+                        <button type="button" class="btn btn-primary" id="downloadVideoBtn">
+                            <i class="fas fa-download"></i> 解析済み動画
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="downloadAnnotationsBtn">
+                            <i class="fas fa-file-code"></i> 注釈データ (JSON)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Detection Results -->
+                <div class="detection-results" id="detectionResults">
+                    <h3>検出結果詳細</h3>
+                    <div class="results-table-container">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>フレーム</th>
+                                    <th>オブジェクト</th>
+                                    <th>信頼度</th>
+                                    <th>トラックID</th>
+                                    <th>位置 (bbox)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                                <!-- Results will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section class="error-section" id="errorSection" style="display: none;">
+                <h2><i class="fas fa-exclamation-triangle"></i> エラー</h2>
+                <div class="error-message" id="errorMessage">
+                    <!-- Error details will be shown here -->
+                </div>
+                <button type="button" class="btn btn-primary" id="retryBtn">
+                    <i class="fas fa-redo"></i> 再試行
+                </button>
+            </section>
+
+            <!-- Task History -->
+            <section class="history-section">
+                <h2><i class="fas fa-history"></i> 処理履歴</h2>
+                <div class="history-list" id="historyList">
+                    <p class="no-history">まだ処理履歴がありません</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 CCTV映像解析システム - Powered by Grounded-SAM-2</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

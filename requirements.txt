@@ -1,0 +1,69 @@
+# Web Framework
+Flask==2.3.3
+Flask-CORS==4.0.0
+Werkzeug==2.3.7
+
+# Alternative: FastAPI
+# fastapi==0.103.2
+# uvicorn==0.23.2
+
+# Core ML/CV Libraries
+torch>=2.3.1
+torchvision>=0.18.1
+torchaudio>=2.3.1
+transformers>=4.33.0
+accelerate>=0.22.0
+
+# Computer Vision
+opencv-python==4.8.1.78
+opencv-contrib-python==4.8.1.78
+Pillow>=9.5.0
+
+# SAM 2 Dependencies
+# Note: SAM 2 will be installed separately
+
+# Grounding DINO Dependencies
+# Note: Grounding DINO will be built from source
+supervision>=0.13.0
+
+# Video Processing
+moviepy==1.0.3
+ffmpeg-python==0.2.0
+
+# Image Processing
+scikit-image>=0.21.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Data Processing
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.11.0
+
+# Utilities
+tqdm>=4.65.0
+requests>=2.31.0
+python-multipart>=0.0.6
+
+# File Operations
+aiofiles>=23.2.1
+
+# JSON and Configuration
+pydantic>=2.3.0
+python-dotenv>=1.0.0
+
+# Optional: Cloud API for Grounding DINO 1.5/DINO-X
+# dds-cloudapi-sdk
+
+# Optional: SAHI for high-resolution inference
+# sahi
+
+# Development Tools (optional)
+pytest>=7.4.0
+black>=23.7.0
+flake8>=6.0.0
+
+# System Dependencies (install via system package manager)
+# - CUDA Toolkit (for GPU acceleration)
+# - FFmpeg (for video processing)
+# - Git (for model downloads)
