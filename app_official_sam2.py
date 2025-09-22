@@ -516,8 +516,8 @@ if __name__ == '__main__':
     
     print("🔄 Streaming downloads enabled")
     print("📤 Chunked uploads enabled")
-    print("🌐 Server will run on http://0.0.0.0:5003")
+    print("🌐 Server will run on http://0.0.0.0:5004")
     print("=" * 60)
     
-    port = int(os.environ.get('PORT', 5003))  # Use port 5003 for official version
+    port = int(os.environ.get('PORT', 5004))  # Use port 5004 for official version
     app.run(host='0.0.0.0', port=port, debug=False)

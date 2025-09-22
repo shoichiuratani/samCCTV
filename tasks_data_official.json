@@ -1,0 +1,33 @@
+{
+  "61bfd71a-f9d9-4b82-abf0-550cd833d9fc": {
+    "id": "61bfd71a-f9d9-4b82-abf0-550cd833d9fc",
+    "filename": "test.mp4",
+    "file_path": "/home/user/webapp/uploads/61bfd71a-f9d9-4b82-abf0-550cd833d9fc_test.mp4",
+    "status": "uploaded",
+    "upload_time": "2025-09-22T05:07:22.779741",
+    "file_size": 48170507
+  },
+  "163d82d4-7151-4e26-ade8-e5b209cd3fba": {
+    "id": "163d82d4-7151-4e26-ade8-e5b209cd3fba",
+    "filename": "test.mp4",
+    "file_path": "/home/user/webapp/uploads/163d82d4-7151-4e26-ade8-e5b209cd3fba_test.mp4",
+    "status": "completed",
+    "upload_time": "2025-09-22T05:38:38.720830",
+    "file_size": 48170507,
+    "start_time": "2025-09-22T05:39:25.151840",
+    "text_prompt": "person",
+    "analyzer_type": "Enhanced Detection",
+    "end_time": "2025-09-22T05:40:17.109596",
+    "result": {
+      "output_video_path": "/home/user/webapp/outputs/163d82d4-7151-4e26-ade8-e5b209cd3fba/result_video.mp4",
+      "annotations_path": "/home/user/webapp/outputs/163d82d4-7151-4e26-ade8-e5b209cd3fba/annotations.json",
+      "summary": {
+        "total_detections": 21,
+        "unique_objects": 1,
+        "frames_processed": 302,
+        "processing_time": "0:01:30",
+        "detection_method": "Improved OpenCV Detection"
+      }
+    }
+  }
+}
