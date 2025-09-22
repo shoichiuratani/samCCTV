@@ -1,0 +1,23 @@
+{
+  "fc5d7bce-6f5f-4c1b-9224-5ecadc9580fd": {
+    "id": "fc5d7bce-6f5f-4c1b-9224-5ecadc9580fd",
+    "filename": "test.mp4",
+    "file_path": "uploads/fc5d7bce-6f5f-4c1b-9224-5ecadc9580fd.mp4",
+    "status": "completed",
+    "upload_time": "2025-09-22T03:49:53.000000",
+    "end_time": "2025-09-22T03:50:35.000000",
+    "file_size": 123456,
+    "text_prompt": "person",
+    "analyzer_type": "Real Grounded-SAM-2",
+    "result": {
+      "output_video_path": "/home/user/webapp/outputs/fc5d7bce-6f5f-4c1b-9224-5ecadc9580fd/result_video.mp4",
+      "annotations_path": "/home/user/webapp/outputs/fc5d7bce-6f5f-4c1b-9224-5ecadc9580fd/annotations.json",
+      "summary": {
+        "total_detections": 5,
+        "unique_objects": 1,
+        "frames_processed": 100,
+        "processing_time": "0:00:42"
+      }
+    }
+  }
+}

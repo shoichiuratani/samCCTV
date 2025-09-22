@@ -38,7 +38,7 @@ class RealGroundedSAM2Analyzer:
         self.sam2_predictor = None
         self.grounding_dino_model = None
         self.sam2_checkpoint = os.path.join(GROUNDED_SAM2_PATH, "checkpoints/sam2.1_hiera_tiny.pt")
-        self.gdino_checkpoint = os.path.join(GROUNDED_SAM2_PATH, "gdino_checkpoints/groundingdino_swint_ogc.pth")
+        self.gdino_checkpoint = os.path.join(GROUNDED_SAM2_PATH, "checkpoints/groundingdino_swint_ogc.pth")
         
         # Analysis parameters
         self.box_threshold = 0.35
@@ -55,7 +55,7 @@ class RealGroundedSAM2Analyzer:
             from sam2.build_sam import build_sam2_video_predictor
             
             # SAM 2.1 config
-            sam2_config = "configs/sam2.1/sam2.1_hiera_t.yaml"
+            sam2_config = "sam2/configs/sam2.1/sam2.1_hiera_t.yaml"
             sam2_config_path = os.path.join(GROUNDED_SAM2_PATH, sam2_config)
             
             if os.path.exists(self.sam2_checkpoint) and os.path.exists(sam2_config_path):

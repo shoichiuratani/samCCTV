@@ -39,6 +39,40 @@ os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
 
 # Store for analysis tasks (in production, use a database)
 analysis_tasks = {}
+TASKS_FILE = os.path.join(os.path.dirname(__file__), 'tasks_data.json')
+
+def load_tasks():
+    """Load tasks from file on startup"""
+    global analysis_tasks
+    try:
+        if os.path.exists(TASKS_FILE):
+            with open(TASKS_FILE, 'r') as f:
+                analysis_tasks = json.load(f)
+                print(f"Loaded {len(analysis_tasks)} existing tasks")
+                # Verify files still exist
+                valid_tasks = {}
+                for task_id, task in analysis_tasks.items():
+                    if task.get('status') == 'completed':
+                        result = task.get('result', {})
+                        video_path = result.get('output_video_path')
+                        if video_path and os.path.exists(video_path):
+                            valid_tasks[task_id] = task
+                        else:
+                            print(f"Task {task_id} output file missing, removing")
+                    else:
+                        valid_tasks[task_id] = task
+                analysis_tasks = valid_tasks
+    except Exception as e:
+        print(f"Error loading tasks: {e}")
+        analysis_tasks = {}
+
+def save_tasks():
+    """Save tasks to file"""
+    try:
+        with open(TASKS_FILE, 'w') as f:
+            json.dump(analysis_tasks, f, indent=2)
+    except Exception as e:
+        print(f"Error saving tasks: {e}")
 
 # Initialize Real Grounded-SAM-2 analyzer
 try:
@@ -208,6 +242,7 @@ def upload_file():
             'upload_time': datetime.now().isoformat(),
             'file_size': os.path.getsize(file_path)
         }
+        save_tasks()  # Persist task data
         
         return jsonify({
             'task_id': task_id,
@@ -250,6 +285,7 @@ def analyze_video():
             task['status'] = 'completed'
             task['end_time'] = datetime.now().isoformat()
             task['result'] = result
+            save_tasks()  # Persist completed task
             
             return jsonify({
                 'task_id': task_id,
@@ -306,36 +342,67 @@ def get_results(task_id):
 def download_result(task_id, file_type):
     """Download result files (video or annotations)"""
     try:
+        print(f"Download request: task_id={task_id}, file_type={file_type}")
+        
         if task_id not in analysis_tasks:
+            print(f"Task {task_id} not found in analysis_tasks")
             return jsonify({'error': 'Task not found'}), 404
         
         task = analysis_tasks[task_id]
+        print(f"Task status: {task['status']}")
+        
         if task['status'] != 'completed':
             return jsonify({'error': 'Analysis not completed'}), 400
         
         result = task.get('result', {})
+        print(f"Task result keys: {list(result.keys())}")
         
         if file_type == 'video':
             file_path = result.get('output_video_path')
+            print(f"Video file path: {file_path}")
+            
             if file_path and os.path.exists(file_path):
+                file_size = os.path.getsize(file_path)
+                print(f"Video file exists, size: {file_size} bytes")
+                
                 filename = f"real_sam2_video_{task_id}.mp4"
-                return send_file(file_path, 
-                               as_attachment=True, 
-                               download_name=filename,
-                               mimetype='video/mp4')
+                
+                response = send_file(
+                    file_path, 
+                    as_attachment=True, 
+                    download_name=filename,
+                    mimetype='video/mp4'
+                )
+                
+                # Add additional headers for better compatibility
+                response.headers['Content-Length'] = str(file_size)
+                response.headers['Accept-Ranges'] = 'bytes'
+                response.headers['Cache-Control'] = 'no-cache'
+                
+                return response
+            else:
+                print(f"Video file not found or does not exist: {file_path}")
+                return jsonify({'error': 'Video file not found'}), 404
+                
         elif file_type == 'annotations':
             file_path = result.get('annotations_path')
+            print(f"Annotations file path: {file_path}")
+            
             if file_path and os.path.exists(file_path):
                 filename = f"real_sam2_annotations_{task_id}.json"
                 return send_file(file_path, 
                                as_attachment=True, 
                                download_name=filename,
                                mimetype='application/json')
+            else:
+                print(f"Annotations file not found: {file_path}")
+                return jsonify({'error': 'Annotations file not found'}), 404
         
-        return jsonify({'error': 'File not found'}), 404
+        return jsonify({'error': f'Invalid file type: {file_type}'}), 400
         
     except Exception as e:
         print(f"Download error: {e}")
+        print(f"Error traceback: {traceback.format_exc()}")
         return jsonify({'error': f'Download failed: {str(e)}'}), 500
 
 @app.route('/tasks')
@@ -432,6 +499,9 @@ def internal_error(error):
     return jsonify({'error': 'Internal server error'}), 500
 
 if __name__ == '__main__':
+    # Load existing tasks on startup
+    load_tasks()
+    
     print("=" * 60)
     print("🚀 Starting CCTV Video Analysis Application with REAL Grounded-SAM-2")
     print("=" * 60)
