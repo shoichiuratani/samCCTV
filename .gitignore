@@ -96,3 +96,6 @@ docker-compose.yml
 sam2/
 Grounded-SAM-2/
 grounding_dino/build/
+# External AI model repositories
+GroundingDINO/
+Grounded-SAM-2/
